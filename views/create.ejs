@@ -1,0 +1,187 @@
+<%- include('partials/header', { title, API_BASE }) %>
+<%
+const page = 'create';
+%>
+<%- include('partials/navbar', { page }) %>
+
+<div class="main-wrapper">
+  <header class="top-navbar">
+    <button class="hamburger-btn" id="hamburgerBtn"><i class="bi bi-list"></i></button>
+    <span class="navbar-title">Log Activity</span>
+    <div class="navbar-actions" style="margin-left:auto;">
+      <a href="/" class="btn-secondary-custom">
+        <i class="bi bi-arrow-left"></i> Back
+      </a>
+    </div>
+  </header>
+
+  <main class="page-content" data-page="create">
+    <div class="page-header fade-in-up">
+      <h1 class="page-title">Log New Activity</h1>
+      <p class="page-subtitle">Record your workout and track your progress.</p>
+    </div>
+
+    <div class="form-card fade-in-up">
+      <!-- Activity type quick select -->
+      <div style="margin-bottom:28px;">
+        <div class="form-label-custom">Quick Select Type</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;" id="typeQuickSelect">
+          <% const types = [
+            {val:'Running', icon:'🏃'},
+            {val:'Cycling', icon:'🚴'},
+            {val:'Swimming', icon:'🏊'},
+            {val:'Gym', icon:'🏋️'},
+            {val:'Yoga', icon:'🧘'},
+            {val:'Hiking', icon:'🥾'},
+            {val:'Walking', icon:'🚶'},
+            {val:'Other', icon:'⚡'}
+          ]; %>
+          <% types.forEach(t => { %>
+          <button type="button" class="filter-chip type-quick-btn" data-value="<%= t.val %>">
+            <%= t.icon %> <%= t.val %>
+          </button>
+          <% }) %>
+        </div>
+      </div>
+
+      <form id="activityForm" novalidate>
+        <div class="form-row">
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="type">Activity Type *</label>
+            <select class="form-select-custom" name="type" id="type" required>
+              <option value="">Select type…</option>
+              <% types.forEach(t => { %>
+              <option value="<%= t.val %>"><%= t.icon %> <%= t.val %></option>
+              <% }) %>
+            </select>
+            <div class="invalid-feedback-custom">Please select an activity type.</div>
+          </div>
+
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="date">Date *</label>
+            <input type="date" class="form-control-custom" name="date" id="date" required />
+            <div class="invalid-feedback-custom">Please select a date.</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="duration">Duration (minutes) *</label>
+            <input
+              type="number"
+              class="form-control-custom"
+              name="duration"
+              id="duration"
+              placeholder="e.g. 45"
+              min="1"
+              max="1440"
+              required
+            />
+            <div class="invalid-feedback-custom">Enter a valid duration (1–1440 min).</div>
+          </div>
+
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="calories">Calories Burned *</label>
+            <input
+              type="number"
+              class="form-control-custom"
+              name="calories"
+              id="calories"
+              placeholder="e.g. 350"
+              min="0"
+              max="10000"
+              required
+            />
+            <div class="invalid-feedback-custom">Enter a valid calorie amount.</div>
+          </div>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="form-label-custom" for="notes">Notes <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(optional)</span></label>
+          <textarea
+            class="form-control-custom"
+            name="notes"
+            id="notes"
+            placeholder="How did it go? Any personal records?"
+          ></textarea>
+        </div>
+
+        <!-- Live preview card -->
+        <div id="previewCard" style="display:none;background:rgba(0,245,160,0.04);border:1px dashed rgba(0,245,160,0.25);border-radius:var(--radius-md);padding:20px;margin-bottom:24px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-green);font-weight:600;margin-bottom:12px;">
+            <i class="bi bi-eye me-1"></i> Preview
+          </div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">TYPE</div>
+              <div id="previewType" style="font-weight:600;color:var(--text-primary);"></div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">DURATION</div>
+              <div id="previewDuration" style="font-weight:600;color:var(--text-primary);"></div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">CALORIES</div>
+              <div id="previewCalories" style="font-weight:600;color:var(--text-primary);"></div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;">DATE</div>
+              <div id="previewDate" style="font-weight:600;color:var(--text-primary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;">
+          <button type="submit" class="btn-primary-custom">
+            <i class="bi bi-check-lg"></i> Save Activity
+          </button>
+          <a href="/" class="btn-secondary-custom">
+            <i class="bi bi-x"></i> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+
+
+<script>
+// Live preview
+const fields = ['type','duration','calories','date'];
+function updatePreview() {
+  const t = document.getElementById('type').value;
+  const d = document.getElementById('duration').value;
+  const c = document.getElementById('calories').value;
+  const dt = document.getElementById('date').value;
+  const preview = document.getElementById('previewCard');
+  if (t || d || c || dt) {
+    preview.style.display = 'block';
+    document.getElementById('previewType').textContent = t || '—';
+    document.getElementById('previewDuration').textContent = d ? d + ' min' : '—';
+    document.getElementById('previewCalories').textContent = c ? Number(c).toLocaleString() + ' kcal' : '—';
+    document.getElementById('previewDate').textContent = dt || '—';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+fields.forEach(id => document.getElementById(id)?.addEventListener('input', updatePreview));
+document.getElementById('type')?.addEventListener('change', updatePreview);
+
+// Set today's date default
+document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+// Quick type select
+document.querySelectorAll('.type-quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.type-quick-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('type').value = btn.dataset.value;
+    updatePreview();
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

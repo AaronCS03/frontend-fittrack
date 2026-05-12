@@ -1,0 +1,52 @@
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="/" class="logo-mark">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">Fit<span>Track</span></span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="/" class="nav-item <%= page === 'dashboard' ? 'active' : '' %>">
+      <i class="bi bi-grid-1x2-fill"></i>
+      <span>Dashboard</span>
+      <% if (page === 'dashboard') { %><span class="nav-badge">Live</span><% } %>
+    </a>
+
+    <div class="nav-section-label" style="margin-top:16px;">Activities</div>
+    <a href="/activities/create" class="nav-item <%= page === 'create' ? 'active' : '' %>">
+      <i class="bi bi-plus-circle-fill"></i>
+      <span>Log Activity</span>
+    </a>
+    <a href="/" class="nav-item">
+      <i class="bi bi-list-ul"></i>
+      <span>All Activities</span>
+    </a>
+
+    <div class="nav-section-label" style="margin-top:16px;">Insights</div>
+    <a href="#" class="nav-item">
+      <i class="bi bi-graph-up-arrow"></i>
+      <span>Progress</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="bi bi-calendar3"></i>
+      <span>Calendar</span>
+    </a>
+    <a href="#" class="nav-item">
+      <i class="bi bi-trophy-fill"></i>
+      <span>Goals</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="theme-toggle-btn" id="themeToggle">
+      <i class="bi bi-sun-fill"></i>
+      <span>Light Mode</span>
+    </button>
+  </div>
+</aside>

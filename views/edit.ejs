@@ -1,0 +1,133 @@
+<%- include('partials/header', { title, API_BASE, activityId }) %>
+<%
+const page = 'edit';
+%>
+<%- include('partials/navbar', { page }) %>
+
+<div class="main-wrapper">
+  <header class="top-navbar">
+    <button class="hamburger-btn" id="hamburgerBtn"><i class="bi bi-list"></i></button>
+    <span class="navbar-title">Edit Activity</span>
+    <div class="navbar-actions" style="margin-left:auto;">
+      <a href="/" class="btn-secondary-custom">
+        <i class="bi bi-arrow-left"></i> Back
+      </a>
+    </div>
+  </header>
+
+  <main class="page-content" data-page="edit">
+    <div class="page-header fade-in-up">
+      <h1 class="page-title">Edit Activity</h1>
+      <p class="page-subtitle">Update your workout details below.</p>
+    </div>
+
+    <div class="form-card fade-in-up">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <div style="background:rgba(0,245,160,0.1);border:1px solid rgba(0,245,160,0.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--accent-green);">
+          <i class="bi bi-pencil-square me-1"></i> Editing Activity ID: <strong><%= activityId %></strong>
+        </div>
+      </div>
+
+      <form id="activityForm" novalidate>
+        <div class="form-row">
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="type">Activity Type *</label>
+            <select class="form-select-custom" name="type" id="type" required>
+              <option value="">Select type…</option>
+              <% const types = ['Running','Cycling','Swimming','Gym','Yoga','Hiking','Walking','Other']; %>
+              <% types.forEach(t => { %>
+              <option value="<%= t %>"><%= t %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="date">Date *</label>
+            <input type="date" class="form-control-custom" name="date" id="date" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="duration">Duration (minutes) *</label>
+            <input
+              type="number"
+              class="form-control-custom"
+              name="duration"
+              id="duration"
+              placeholder="e.g. 45"
+              min="1"
+              max="1440"
+              required
+            />
+          </div>
+
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="calories">Calories Burned *</label>
+            <input
+              type="number"
+              class="form-control-custom"
+              name="calories"
+              id="calories"
+              placeholder="e.g. 350"
+              min="0"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="form-label-custom" for="notes">Notes <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(optional)</span></label>
+          <textarea
+            class="form-control-custom"
+            name="notes"
+            id="notes"
+            placeholder="Update your notes…"
+          ></textarea>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <button type="submit" class="btn-primary-custom">
+            <i class="bi bi-check-lg"></i> Update Activity
+          </button>
+          <a href="/activities/<%= activityId %>" class="btn-secondary-custom">
+            <i class="bi bi-eye"></i> View Details
+          </a>
+          <a href="/" class="btn-secondary-custom">
+            <i class="bi bi-x"></i> Cancel
+          </a>
+          <button type="button" class="btn-danger-custom" style="margin-left:auto;" onclick="confirmDelete('<%= activityId %>')">
+            <i class="bi bi-trash-fill"></i> Delete
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade modal-custom" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Delete Activity</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-secondary);">Are you sure you want to delete this activity? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn-danger-custom" id="confirmDeleteBtn" style="padding:10px 20px;font-size:14px;">
+          <i class="bi bi-trash-fill"></i> Delete Activity
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+
+
+<%- include('partials/footer') %>
