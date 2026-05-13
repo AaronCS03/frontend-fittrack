@@ -1,3 +1,4 @@
+# Starling Herrera y Aaron Coste
 # frontend-fittrack
 # FitTrack API & Frontend 🏃‍♂️🔥
 
